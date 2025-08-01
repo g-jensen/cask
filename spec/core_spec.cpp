@@ -2,7 +2,7 @@
 #include "bdd.hpp"
 
 #include "core_spec.hpp"
-#include "../src/core.hpp"
+#include "src/core.hpp"
 
 int millisecondsStub = 0;
 int nextStateInvocations = 0;
