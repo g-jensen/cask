@@ -1,3 +1,5 @@
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
+
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -g
 INCLUDES = -Isrc -Ispec/lib
@@ -14,7 +16,7 @@ SPEC_OBJECTS = $(patsubst $(SPEC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SPEC_SOURCES))
 SPEC_MAIN = $(BUILD_DIR)/test.o
 TEST_RUNNER = $(BUILD_DIR)/run_tests
 
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+SOURCES = $(shell find $(SRC_DIR) -name '*.cpp')
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 MAIN = $(BUILD_DIR)/cask
 
@@ -30,28 +32,32 @@ test: $(TEST_RUNNER)
 	@echo "Running tests..."
 	@./$(TEST_RUNNER)
 
-$(TEST_RUNNER): $(SPEC_MAIN) $(SPEC_OBJECTS) $(filter-out $(BUILD_DIR)/main.o,$(OBJECTS))
+MKBUILD:
 	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)/Events
+
+$(TEST_RUNNER): $(SPEC_MAIN) $(SPEC_OBJECTS) $(filter-out $(BUILD_DIR)/main.o,$(OBJECTS))
+	@$(MAKE) -f $(THIS_FILE) MKBUILD
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 $(MAIN): $(OBJECTS)
-	@mkdir -p $(BUILD_DIR)
+	@$(MAKE) -f $(THIS_FILE) MKBUILD
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 $(BUILD_DIR)/test.o: $(SPEC_DIR)/test.cpp $(SPEC_DIR)/lib/catch.hpp
-	@mkdir -p $(BUILD_DIR)
+	@$(MAKE) -f $(THIS_FILE) MKBUILD
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SYSTEM_INCLUDES) -c $< -o $@
 
 $(BUILD_DIR)/%_spec.o: $(SPEC_DIR)/%_spec.cpp $(SPEC_DIR)/lib/bdd.hpp
-	@mkdir -p $(BUILD_DIR)
+	@$(MAKE) -f $(THIS_FILE) MKBUILD
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SYSTEM_INCLUDES) -c $< -o $@
 
 $(BUILD_DIR)/main.o: $(SRC_DIR)/main.cpp
-	@mkdir -p $(BUILD_DIR)
+	@$(MAKE) -f $(THIS_FILE) MKBUILD
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SYSTEM_INCLUDES) -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR)
+	@$(MAKE) -f $(THIS_FILE) MKBUILD
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SYSTEM_INCLUDES) -c $< -o $@
 
 .PHONY: main
