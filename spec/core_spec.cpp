@@ -1,8 +1,8 @@
 #include "catch.hpp"
 #include "bdd.hpp"
 
-#include "headers/core_spec.hpp"
-#include "../src/headers/core.hpp"
+#include "core_spec.hpp"
+#include "../src/core.hpp"
 
 int millisecondsStub = 0;
 int nextStateInvocations = 0;

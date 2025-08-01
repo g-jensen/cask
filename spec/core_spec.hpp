@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../src/headers/Engine.hpp"
+#include "../src/Engine.hpp"
 
 template <int iterations>
 class InterationEngine : public Engine<int> {
