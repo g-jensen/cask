@@ -47,5 +47,5 @@ T gameLoop(Engine<T> *engine, T initialState, GameLoopOptions options) {
     state = fastForward(engine,state,lag,options.msPerUpdate);
     start = timeFn();
   }
-  return initialState;
+  return state;
 }

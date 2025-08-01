@@ -32,6 +32,7 @@ bool InterationEngine<iterations>::shouldHalt(int state) {
 
 template <int iterations>
 void InterationEngine<iterations>::render(int state) {
+  (void)state; // for compiler warnings
   renderInvocations++;
   return;
 }
@@ -80,10 +81,10 @@ describe("Core", [] {
     });
 
     it("game logic and rendering are perfectly in sync", [] {
-      auto engine = InterationEngine<5>();
+      auto engine = InterationEngine<6>();
       gameLoop(&engine,0,options(1,1));
-      should_eq(5,nextStateInvocations);
-      should_eq(5,renderInvocations);
+      should_eq(6,nextStateInvocations);
+      should_eq(6,renderInvocations);
     });
 
     it("each render takes 2 ms", [] {
@@ -91,6 +92,18 @@ describe("Core", [] {
       gameLoop(&engine,0,options(1,2));
       should_eq(6,nextStateInvocations);
       should_eq(3,renderInvocations);
+    });
+
+    it("each render takes 4 ms", [] {
+      auto engine = InterationEngine<6>();
+      gameLoop(&engine,0,options(1,4));
+      should_eq(6,nextStateInvocations);
+      should_eq(2,renderInvocations);
+    });
+
+    it("returns final state", [] {
+      auto engine = InterationEngine<6>();
+      should_eq(6,gameLoop(&engine,0,options(1,1)));
     });
   });
 });
